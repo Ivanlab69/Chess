@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 
 # Initialize pygame
 pygame.init()
@@ -10,20 +11,28 @@ SQUARE_SIZE = WIDTH // 8
 WHITE = (240, 217, 181)
 BROWN = (181, 136, 99)
 BLACK = (0, 0, 0)
-FONT = pygame.font.Font(None, 50)
+
+# Load piece images
+piece_images = {}
+piece_names = ['black_rook', 'black_knight', 'black_bishop', 'black_queen', 'black_king', 'black_pawn',
+               'white_rook', 'white_knight', 'white_bishop', 'white_queen', 'white_king', 'white_pawn']
+for piece in piece_names:
+    path = os.path.join("pieces", f"{piece}.png")
+    piece_images[piece] = pygame.image.load(path)
+    piece_images[piece] = pygame.transform.scale(piece_images[piece], (SQUARE_SIZE, SQUARE_SIZE))
 
 # Chessboard class
 class ChessBoard:
     def __init__(self):
         self.board = [
-            ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
-            ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
-            ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
+            ['black_rook', 'black_knight', 'black_bishop', 'black_queen', 'black_king', 'black_bishop', 'black_knight', 'black_rook'],
+            ['black_pawn'] * 8,
+            [' '] * 8,
+            [' '] * 8,
+            [' '] * 8,
+            [' '] * 8,
+            ['white_pawn'] * 8,
+            ['white_rook', 'white_knight', 'white_bishop', 'white_queen', 'white_king', 'white_bishop', 'white_knight', 'white_rook']
         ]
         self.selected_piece = None
 
@@ -33,10 +42,8 @@ class ChessBoard:
                 color = WHITE if (row + col) % 2 == 0 else BROWN
                 pygame.draw.rect(screen, color, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
                 piece = self.board[row][col]
-                if piece != ' ':
-                    text = FONT.render(piece, True, BLACK)
-                    text_rect = text.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2))
-                    screen.blit(text, text_rect)
+                if piece in piece_images:
+                    screen.blit(piece_images[piece], (col * SQUARE_SIZE, row * SQUARE_SIZE))
     
     def handle_click(self, pos):
         col, row = pos[0] // SQUARE_SIZE, pos[1] // SQUARE_SIZE
@@ -80,3 +87,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
